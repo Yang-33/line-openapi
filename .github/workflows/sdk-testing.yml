@@ -11,7 +11,7 @@ jobs:
 
         steps:
             - name: Checkout SDK repo
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
               with:
                 repository: 'line/line-bot-sdk-java'
                 submodules: recursive
@@ -29,8 +29,105 @@ jobs:
                 git fetch pr-source ${{ github.event.pull_request.head.ref }}
                 git checkout FETCH_HEAD
 
+            # https://github.com/line/line-bot-sdk-java/blob/master/.github/workflows/gradle.yml
             - name: Generate code
               run: python3 generate-code.py
 
             - name: Execute Java SDK test
               run: ./gradlew build
+
+    test-python:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout SDK repo
+              uses: actions/checkout@v4
+              with:
+                repository: 'line/line-bot-sdk-python'
+                submodules: recursive
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                distribution: 'temurin'
+                python-version: '3.11'
+
+            - name: Update line-openapi submodule
+              run: |
+                cd line-openapi
+                git remote add pr-source ${{ github.event.pull_request.head.repo.clone_url }}
+                git fetch pr-source ${{ github.event.pull_request.head.ref }}
+                git checkout FETCH_HEAD
+
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+                if [ -f requirements-dev.txt ]; then python -m pip install -r requirements-dev.txt; fi
+
+            - name: Generate code
+              run: python3 generate-code.py
+
+            - name: Update version in linebot/__about__.py
+              run: |
+                sed -i 's/__version__ = "__LINE_BOT_SDK_PYTHON_VERSION__"/__version__ = "12.34.5"/g' linebot/__about__.py
+
+            - name: Test with pytest
+              run: tox
+
+    # test-php:
+    #     runs-on: ubuntu-latest
+
+    #     steps:
+    #         - name: Checkout SDK repo
+    #           uses: actions/checkout@v4
+    #           with:
+    #             repository: 'line/line-bot-sdk-php'
+    #             submodules: recursive
+
+    #         - name: Setup Java
+    #           uses: actions/setup-java@v3
+    #           with:
+    #             distribution: 'temurin'
+    #             java-version: '17'
+
+    #         - name: Update line-openapi submodule
+    #           run: |
+    #             cd line-openapi
+    #             git remote add pr-source ${{ github.event.pull_request.head.repo.clone_url }}
+    #             git fetch pr-source ${{ github.event.pull_request.head.ref }}
+    #             git checkout FETCH_HEAD
+
+    #         - name: Generate code
+    #           run: python3 generate-code.py
+
+    #         - name: Execute Java SDK test
+    #           run: ./gradlew build
+
+    # test-nodejs:
+    #     runs-on: ubuntu-latest
+
+    #     steps:
+    #         - name: Checkout SDK repo
+    #           uses: actions/checkout@v4
+    #           with:
+    #             repository: 'line/line-bot-sdk-java'
+    #             submodules: recursive
+
+    #         - name: Setup Java
+    #           uses: actions/setup-java@v3
+    #           with:
+    #             distribution: 'temurin'
+    #             java-version: '17'
+
+    #         - name: Update line-openapi submodule
+    #           run: |
+    #             cd line-openapi
+    #             git remote add pr-source ${{ github.event.pull_request.head.repo.clone_url }}
+    #             git fetch pr-source ${{ github.event.pull_request.head.ref }}
+    #             git checkout FETCH_HEAD
+
+    #         - name: Generate code
+    #           run: python3 generate-code.py
+
+    #         - name: Execute Java SDK test
+    #           run: ./gradlew build
