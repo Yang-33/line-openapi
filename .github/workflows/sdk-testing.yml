@@ -138,10 +138,6 @@ jobs:
                 git checkout FETCH_HEAD
 
             # https://github.com/line/line-bot-sdk-nodejs/blob/master/.github/workflows/test.yml
-            - uses: actions/checkout@v4
-              with:
-                submodules: true
-
             - name: actions/setup-java@v3
               uses: actions/setup-java@v3
               with:
