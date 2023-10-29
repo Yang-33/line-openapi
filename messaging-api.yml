@@ -117,7 +117,7 @@ paths:
                 type: string
                 format: binary
 
-  "/v2/bot/message/{messageId}/content/preview":
+  "/v2/bot/message/{messageId}/content/preview2":
     get:
       externalDocs:
         url: https://developers.line.biz/en/reference/messaging-api/#get-image-or-video-preview
@@ -1595,9 +1595,9 @@ paths:
         - messaging-api
       operationId: richMenuBatch
       description: |+
-        You can use this endpoint to batch control the rich menu linked to the users using the endpoint such as Link rich menu to user. 
+        You can use this endpoint to batch control the rich menu linked to the users using the endpoint such as Link rich menu to user.
         The following operations are available:
-        
+
         1. Replace a rich menu with another rich menu for all users linked to a specific rich menu
         2. Unlink a rich menu for all users linked to a specific rich menu
         3. Unlink a rich menu for all users linked the rich menu
@@ -3231,7 +3231,7 @@ components:
           format: date-time
           description: |+
             The accepted time in milliseconds of the request of batch control the rich menu.
-            
+
             Format: ISO 8601 (e.g. 2023-06-08T10:15:30.121Z)
             Timezone: UTC
         completedTime:
@@ -3246,11 +3246,11 @@ components:
       type: string
       description: |+
         The current status. One of:
-        
+
         `ongoing`: Rich menu batch control is in progress.
         `succeeded`: Rich menu batch control is complete.
         `failed`: Rich menu batch control failed.
-                  This means that the rich menu for one or more users couldn't be controlled. 
+                  This means that the rich menu for one or more users couldn't be controlled.
                   There may also be users whose operations have been successfully completed.
       enum:
         - ongoing
